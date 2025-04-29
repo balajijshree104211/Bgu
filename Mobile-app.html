@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mobile App Frontend</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, button { margin: 5px; }
+    .mobile { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+  </style>
+</head>
+<body>
+
+  <h1>📱 Mobile Management</h1>
+
+  <h2>1. View All Mobiles</h2>
+  <button onclick="getMobileList()">Get Mobile List</button>
+  <div id="mobileList"></div>
+
+  <h2>2. Add New Mobile</h2>
+  <input type="text" id="brand" placeholder="Brand">
+  <input type="text" id="model" placeholder="Model">
+  <input type="number" id="price" placeholder="Price">
+  <button onclick="addMobile()">Add Mobile</button>
+
+  <h2>3. Update Only Model (PATCH)</h2>
+  <input type="number" id="patchId" placeholder="Mobile ID">
+  <input type="text" id="newModel" placeholder="New Model">
+  <button onclick="updateModel()">Update Model</button>
+
+  <h2>4. Modify Entire Mobile (PUT)</h2>
+  <input type="number" id="putId" placeholder="Mobile ID">
+  <input type="text" id="putBrand" placeholder="Brand">
+  <input type="text" id="putModel" placeholder="Model">
+  <input type="number" id="putPrice" placeholder="Price">
+  <button onclick="modifyMobile()">Modify Mobile</button>
+
+  <h2>5. Delete Mobile</h2>
+  <input type="number" id="deleteId" placeholder="Mobile ID">
+  <button onclick="deleteMobile()">Delete</button>
+
+  <script>
+    const apiBase = "http://localhost:8080";
+
+    function getMobileList() {
+      fetch(`${apiBase}/mobilelist`)
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("mobileList");
+          container.innerHTML = "";
+          data.forEach(mobile => {
+            container.innerHTML += `<div class="mobile">
+              <strong>ID:</strong> ${mobile.id}<br>
+              <strong>Brand:</strong> ${mobile.brand}<br>
+              <strong>Model:</strong> ${mobile.model}<br>
+              <strong>Price:</strong> ₹${mobile.price}
+            </div>`;
+          });
+        });
+    }
+
+    function addMobile() {
+      const brand = document.getElementById("brand").value;
+      const model = document.getElementById("model").value;
+      const price = parseInt(document.getElementById("price").value);
+      fetch(`${apiBase}/addmobiles`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brand, model, price })
+      }).then(() => {
+        alert("Mobile added!");
+        getMobileList();
+      });
+    }
+
+    function updateModel() {
+      const id = document.getElementById("patchId").value;
+      const model = document.getElementById("newModel").value;
+      fetch(`${apiBase}/mobilesmodel/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model })
+      }).then(() => {
+        alert("Model updated!");
+        getMobileList();
+      });
+    }
+
+    function modifyMobile() {
+      const id = document.getElementById("putId").value;
+      const brand = document.getElementById("putBrand").value;
+      const model = document.getElementById("putModel").value;
+      const price = parseInt(document.getElementById("putPrice").value);
+      fetch(`${apiBase}/modifymobile/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brand, model, price })
+      }).then(() => {
+        alert("Mobile modified!");
+        getMobileList();
+      });
+    }
+
+    function deleteMobile() {
+      const id = document.getElementById("deleteId").value;
+      fetch(`${apiBase}/deletemobile/${id}`, {
+        method: "DELETE"
+      }).then(() => {
+        alert("Mobile deleted!");
+        getMobileList();
+      });
+    }
+  </script>
+
+</body>
+</html>
