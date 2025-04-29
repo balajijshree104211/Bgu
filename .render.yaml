@@ -1,9 +1,6 @@
 services:
   - type: web
-    name: spring-boot-app
+    name: mobiles-service
     env: java
     buildCommand: ./mvnw clean install
-    startCommand: java -jar target/*.jar
-    envVars:
-      - key: JAVA_HOME
-        value: /opt/render/project/.render/jdk
+    startCommand: java -jar target/mobiles-0.0.1-SNAPSHOT.jar
